@@ -1,0 +1,38 @@
+services:
+  testminimal:
+    build:
+      context: /workspace
+      dockerfile: providers/docker/Dockerfile
+      args:
+        PROJECT_USER: "vagrant"
+        PROJECT_UID: "1000"
+        PROJECT_GID: "1000"
+    container_name: testminimal-dev
+    hostname: dev.minimal.local
+    tty: true
+    stdin_open: true
+    environment:
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      - TZ=UTC
+    volumes:
+      - /workspace/.test_artifacts/vm-test-minimal-boot-33499:/workspace:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - testminimal_nvm:/home/vagrant/.nvm
+      - testminimal_cache:/home/vagrant/.cache
+      - testminimal_config:/tmp
+    networks:
+      - testminimal_network
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+
+networks:
+  testminimal_network:
+    driver: bridge
+
+volumes:
+  testminimal_nvm:
+  testminimal_cache:
+  testminimal_config:
